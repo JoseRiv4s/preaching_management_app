@@ -8,46 +8,39 @@ class MainScreen extends StatelessWidget {
   const MainScreen({super.key, required this.child});
 
   int _locationToIndex(String location) {
-    if (location.startsWith('/group')) return 1;
-    if (location.startsWith('/territories')) return 2;
-    return 0;
+    if (location.startsWith('/group'))       return 0;
+    if (location.startsWith('/territories')) return 1;
+    return -1; // home no tiene tab activo
   }
 
   void _onTabTapped(BuildContext context, int index) {
     switch (index) {
-      case 0:
-        context.goNamed('home');
-      case 1:
-        context.goNamed('group');
-      case 2:
-        context.goNamed('territories');
+      case 0: context.goNamed('group');
+      case 1: context.goNamed('territories');
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    final location = GoRouterState.of(context).uri.toString();
+    final location     = GoRouterState.of(context).uri.toString();
     final currentIndex = _locationToIndex(location);
 
     return Scaffold(
       body: child,
-      floatingActionButton: _BuildFab(context),
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+      floatingActionButton: FloatingActionButton(
+        onPressed: () => context.goNamed('nueva-salida'),
+        backgroundColor: AppColors.primary,
+        foregroundColor: Colors.white,
+        elevation: 4,
+        shape: const CircleBorder(),
+        child: const Icon(Icons.add_rounded, size: 28),
+      ),
+      floatingActionButtonLocation:
+          FloatingActionButtonLocation.centerDocked,
       bottomNavigationBar: _BottomBar(
         currentIndex: currentIndex,
         onTap: (i) => _onTabTapped(context, i),
       ),
-    );
-  }
-
-  Widget _BuildFab(BuildContext context) {
-    return FloatingActionButton(
-      onPressed: () => context.goNamed('nueva-salida'),
-      backgroundColor: AppColors.primary,
-      foregroundColor: Colors.white,
-      elevation: 4,
-      shape: const CircleBorder(),
-      child: const Icon(Icons.add_rounded, size: 28),
     );
   }
 }
@@ -56,10 +49,7 @@ class _BottomBar extends StatelessWidget {
   final int currentIndex;
   final ValueChanged<int> onTap;
 
-  const _BottomBar({
-    required this.currentIndex,
-    required this.onTap,
-  });
+  const _BottomBar({required this.currentIndex, required this.onTap});
 
   @override
   Widget build(BuildContext context) {
@@ -79,14 +69,13 @@ class _BottomBar extends StatelessWidget {
             isActive: currentIndex == 0,
             onTap: () => onTap(0),
           ),
-          // Espacio para el FAB
           const SizedBox(width: 64),
           _TabItem(
             icon: Icons.map_outlined,
             activeIcon: Icons.map_rounded,
             label: 'Territorios',
-            isActive: currentIndex == 2,
-            onTap: () => onTap(2),
+            isActive: currentIndex == 1,
+            onTap: () => onTap(1),
           ),
         ],
       ),
@@ -121,14 +110,18 @@ class _TabItem extends StatelessWidget {
           children: [
             Icon(
               isActive ? activeIcon : icon,
-              color: isActive ? AppColors.primary : AppColors.textSecondary,
-              size: 24,
+              color: isActive
+                  ? AppColors.primary
+                  : AppColors.textSecondary,
+              size: 22,
             ),
             const SizedBox(height: 2),
             Text(
               label,
               style: AppTextStyles.caption.copyWith(
-                color: isActive ? AppColors.primary : AppColors.textSecondary,
+                color: isActive
+                    ? AppColors.primary
+                    : AppColors.textSecondary,
                 fontWeight:
                     isActive ? FontWeight.w600 : FontWeight.w400,
               ),
