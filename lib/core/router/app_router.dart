@@ -5,6 +5,7 @@ import '../../features/home/presentation/screen/home_tab.dart';
 import '../../features/group/presentation/screen/group_tab.dart';
 import '../../features/territories/presentation/screen/territories_tab.dart';
 import '../../features/preaching_days/presentation/screen/nueva_salida_screen.dart';
+import '../../features/preaching_days/presentation/screen/history_screen.dart';
 
 final appRouter = GoRouter(
   initialLocation: '/',
@@ -27,6 +28,11 @@ final appRouter = GoRouter(
           path: '/territories',
           name: 'territories',
           builder: (context, state) => const TerritoriesTab(),
+        ),
+        GoRoute(
+          path: '/historial',
+          name: 'historial',
+          builder: (context, state) => const HistoryScreen(),
         ),
       ],
     ),

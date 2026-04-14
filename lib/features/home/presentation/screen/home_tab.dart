@@ -2,18 +2,22 @@ import 'package:flutter/material.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_text_styles.dart';
 import '../../data/mock/home_mock_data.dart';
+import '../../domain/model/preaching_day_summary.dart';
 import '../../domain/model/territory_summary.dart';
 import '../widgets/block_grid_widget.dart';
 import '../widgets/journey_carousel_widget.dart';
+import 'package:go_router/go_router.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../../preaching_days/presentation/provider/preaching_days_provider.dart';
 
-class HomeTab extends StatefulWidget {
+class HomeTab extends ConsumerStatefulWidget {
   const HomeTab({super.key});
 
   @override
-  State<HomeTab> createState() => _HomeTabState();
+  ConsumerState<HomeTab> createState() => _HomeTabState();
 }
 
-class _HomeTabState extends State<HomeTab> {
+class _HomeTabState extends ConsumerState<HomeTab> {
   final List<TerritorySummary> _territories = HomeMockData.territories;
   int _selectedIndex = 0;
 
@@ -31,6 +35,9 @@ class _HomeTabState extends State<HomeTab> {
 
   @override
   Widget build(BuildContext context) {
+    final journeysAsync = ref.watch(journeysByDateProvider);
+    final todayJourneys = journeysAsync.valueOrNull ?? [];
+
     return Scaffold(
       backgroundColor: AppColors.background,
       body: SafeArea(
@@ -43,10 +50,15 @@ class _HomeTabState extends State<HomeTab> {
               backgroundColor: AppColors.surface,
               surfaceTintColor: Colors.transparent,
               elevation: 0,
-              title: Text(
-                'Congresación Villas Del Progreso',
-                style: AppTextStyles.headingMedium,
-              ),
+              title: Text('Congregación Villas del Progreso',
+                  style: AppTextStyles.headingMedium),
+              actions: [
+                IconButton(
+                  icon: const Icon(Icons.history_rounded),
+                  tooltip: 'Historial',
+                  onPressed: () => context.pushNamed('historial'),
+                ),
+              ],
               bottom: PreferredSize(
                 preferredSize: const Size.fromHeight(1),
                 child: Divider(height: 1, color: AppColors.divider),
@@ -64,9 +76,8 @@ class _HomeTabState extends State<HomeTab> {
                     current: _selectedIndex + 1,
                     total: _territories.length,
                     onPrev: _selectedIndex > 0 ? _prev : null,
-                    onNext: _selectedIndex < _territories.length - 1
-                        ? _next
-                        : null,
+                    onNext:
+                        _selectedIndex < _territories.length - 1 ? _next : null,
                   ),
 
                   const SizedBox(height: 8),
@@ -91,9 +102,19 @@ class _HomeTabState extends State<HomeTab> {
 
                   // ── Carrusel de jornadas ──
                   JourneyCarouselWidget(
-                    journeys: HomeMockData.todayJourneys,
+                    journeys: todayJourneys
+                        .map(
+                          (j) => PreachingDaySummary(
+                            id: j.id,
+                            date: j.date,
+                            captainName: j.captainName,
+                            publisherCount: j.participantCount,
+                            territoryName: '',
+                            coveredBlocks: j.coveredBlockNumbers,
+                          ),
+                        )
+                        .toList(),
                   ),
-
                   const SizedBox(height: 100),
                 ],
               ),
@@ -173,10 +194,13 @@ class _NavButton extends StatelessWidget {
         width: 36,
         height: 36,
         decoration: BoxDecoration(
-          color: enabled ? AppColors.primary.withOpacity(0.1) : Colors.transparent,
+          color:
+              enabled ? AppColors.primary.withOpacity(0.1) : Colors.transparent,
           borderRadius: BorderRadius.circular(10),
           border: Border.all(
-            color: enabled ? AppColors.primary.withOpacity(0.3) : AppColors.divider,
+            color: enabled
+                ? AppColors.primary.withOpacity(0.3)
+                : AppColors.divider,
           ),
         ),
         child: Icon(
