@@ -16,6 +16,7 @@ dependencies:
 
   # HTTP client
   dio: ^5.4.3
+  connectivity_plus: ^6.0.3
 
   # Persistencia local (offline-first)
   drift: ^2.18.0

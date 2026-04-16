@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../../core/sync/widgets/sync_status_icon.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_text_styles.dart';
 import '../../data/mock/home_mock_data.dart';
@@ -53,9 +54,9 @@ class _HomeTabState extends ConsumerState<HomeTab> {
               title: Text('Congregación Villas del Progreso',
                   style: AppTextStyles.headingMedium),
               actions: [
+                const SyncStatusIcon(),         // ← ícono de estado
                 IconButton(
                   icon: const Icon(Icons.history_rounded),
-                  tooltip: 'Historial',
                   onPressed: () => context.pushNamed('historial'),
                 ),
               ],

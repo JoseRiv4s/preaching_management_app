@@ -5,6 +5,7 @@ import 'daos/publishers_dao.dart';
 import 'daos/territories_dao.dart';
 import 'daos/blocks_dao.dart';
 import 'daos/preaching_days_dao.dart';
+import 'daos/sync_queue_dao.dart';
 
 part 'app_database.g.dart';
 
@@ -83,6 +84,18 @@ class PreachedBlocks extends Table {
   Set<Column> get primaryKey => {id};
 }
 
+class SyncQueue extends Table {
+  TextColumn get id          => text()();
+  TextColumn get entity      => text()(); // 'publisher','captain', etc
+  TextColumn get operation   => text()(); // 'CREATE','UPDATE','DELETE'
+  TextColumn get payload     => text()(); // JSON del objeto
+  IntColumn  get attempts    => integer().withDefault(const Constant(0))();
+  DateTimeColumn get createdAt => dateTime()();
+
+  @override
+  Set<Column> get primaryKey => {id};
+}
+
 // ══════════════════════════════════════════
 //  BASE DE DATOS
 // ══════════════════════════════════════════
@@ -95,12 +108,14 @@ class PreachedBlocks extends Table {
   PreachingDays,
   PreachingParticipants,
   PreachedBlocks,
+  SyncQueue,
 ], daos: [
   CaptainsDao,
   PublishersDao,
   TerritoriesDao,
   BlocksDao,
   PreachingDaysDao,
+  SyncQueueDao,
 ])
 
 class AppDatabase extends _$AppDatabase {
@@ -118,4 +133,5 @@ class AppDatabase extends _$AppDatabase {
   TerritoriesDao   get territoriesDao   => TerritoriesDao(this);
   BlocksDao        get blocksDao        => BlocksDao(this);
   PreachingDaysDao get preachingDaysDao => PreachingDaysDao(this);
+  SyncQueueDao get syncQueueDao => SyncQueueDao(this);
 }

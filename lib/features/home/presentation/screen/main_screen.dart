@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_text_styles.dart';
+import '../../../../core/sync/widgets/connectivity_banner.dart';
+import '../../../../core/sync/widgets/sync_status_icon.dart';
 
 class MainScreen extends StatelessWidget {
   final Widget child;
@@ -26,7 +28,12 @@ class MainScreen extends StatelessWidget {
     final currentIndex = _locationToIndex(location);
 
     return Scaffold(
-      body: child,
+      body: Column(
+        children: [
+          const ConnectivityBanner(),   // ← banner de estado
+          Expanded(child: child),       // ← contenido normal
+        ],
+      ),
       floatingActionButton: FloatingActionButton(
         onPressed: () => context.goNamed('nueva-salida'),
         backgroundColor: AppColors.primary,
