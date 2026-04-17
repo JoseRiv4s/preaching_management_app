@@ -104,13 +104,12 @@ class _GroupTabState extends ConsumerState<GroupTab> {
 
             const SizedBox(height: 8),
 
-            // 🔥 AQUÍ SE PASA EL SEARCH
             Expanded(
               child: Padding(
                 padding: const EdgeInsets.only(bottom: 90),
                 child: _section == _GroupSection.publishers
-                    ? PublishersScreen()
-                    : CaptainsScreen(),
+                    ? PublishersScreen(search: _search)
+                    : CaptainsScreen(search: _search),
               ),
             ),
 

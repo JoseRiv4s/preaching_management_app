@@ -7,7 +7,8 @@ import '../provider/publishers_provider.dart';
 import '../widgets/publisher_form_sheet.dart';
 
 class PublishersScreen extends ConsumerWidget {
-  const PublishersScreen({super.key});
+  final String search;
+  const PublishersScreen({super.key, this.search = ''});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -21,9 +22,11 @@ class PublishersScreen extends ConsumerWidget {
           message: error.toString(),
           onRetry: () => ref.read(publishersProvider.notifier).sync(),
         ),
-        AsyncData(:final value) when value.isEmpty => _EmptyView(),
         AsyncData(:final value) => _PublisherList(
-          publishers: value,
+          publishers: value
+              .where((p) =>
+              p.name.toLowerCase().contains(search.toLowerCase()))
+              .toList(),
           onEdit: (p) => _showForm(context, ref, p),
           onDelete: (p) => _confirmDelete(context, ref, p),
         ),

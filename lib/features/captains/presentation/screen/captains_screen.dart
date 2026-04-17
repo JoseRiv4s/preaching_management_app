@@ -7,7 +7,8 @@ import '../provider/captains_provider.dart';
 import '../widgets/captain_form_sheet.dart';
 
 class CaptainsScreen extends ConsumerWidget {
-  const CaptainsScreen({super.key});
+  final String search;
+  const CaptainsScreen({super.key, this.search = ''});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -27,7 +28,10 @@ class CaptainsScreen extends ConsumerWidget {
         AsyncData(:final value) when value.isEmpty =>
         const _EmptyView(),
         AsyncData(:final value) => _CaptainList(
-          captains: value,
+          captains: value
+              .where((c) =>
+              c.name.toLowerCase().contains(search.toLowerCase()))
+              .toList(),
           onEdit: (c) => _showForm(context, ref, c),
           onDelete: (c) => _confirmDelete(context, ref, c),
         ),
