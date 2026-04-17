@@ -3,35 +3,42 @@ import 'package:go_router/go_router.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_text_styles.dart';
 import '../../../../core/sync/widgets/connectivity_banner.dart';
-import '../../../../core/sync/widgets/sync_status_icon.dart';
 
 class MainScreen extends StatelessWidget {
   final Widget child;
   const MainScreen({super.key, required this.child});
 
   int _locationToIndex(String location) {
-    if (location.startsWith('/group'))       return 0;
-    if (location.startsWith('/territories')) return 1;
-    return -1; // home no tiene tab activo
+    if (location == '/') return 0;
+    if (location.startsWith('/group')) return 1;
+    if (location.startsWith('/territories')) return 2;
+    if (location.startsWith('/informes')) return 3;
+    return 0;
   }
 
   void _onTabTapped(BuildContext context, int index) {
     switch (index) {
-      case 0: context.goNamed('group');
-      case 1: context.goNamed('territories');
+      case 0:
+        context.goNamed('home');
+      case 1:
+        context.goNamed('group');
+      case 2:
+        context.goNamed('territories');
+      case 3:
+        context.goNamed('informes');
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    final location     = GoRouterState.of(context).uri.toString();
+    final location = GoRouterState.of(context).uri.toString();
     final currentIndex = _locationToIndex(location);
 
     return Scaffold(
       body: Column(
         children: [
-          const ConnectivityBanner(),   // ← banner de estado
-          Expanded(child: child),       // ← contenido normal
+          const ConnectivityBanner(), // ← banner de estado
+          Expanded(child: child), // ← contenido normal
         ],
       ),
       floatingActionButton: FloatingActionButton(
@@ -42,8 +49,7 @@ class MainScreen extends StatelessWidget {
         shape: const CircleBorder(),
         child: const Icon(Icons.add_rounded, size: 28),
       ),
-      floatingActionButtonLocation:
-          FloatingActionButtonLocation.centerDocked,
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
       bottomNavigationBar: _BottomBar(
         currentIndex: currentIndex,
         onTap: (i) => _onTabTapped(context, i),
@@ -70,19 +76,33 @@ class _BottomBar extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: [
           _TabItem(
+            icon: Icons.home_outlined,
+            activeIcon: Icons.home_rounded,
+            label: 'Inicio',
+            isActive: currentIndex == 0,
+            onTap: () => onTap(0),
+          ),
+          _TabItem(
             icon: Icons.group_outlined,
             activeIcon: Icons.group_rounded,
             label: 'Grupo',
-            isActive: currentIndex == 0,
-            onTap: () => onTap(0),
+            isActive: currentIndex == 1,
+            onTap: () => onTap(1),
           ),
           const SizedBox(width: 64),
           _TabItem(
             icon: Icons.map_outlined,
             activeIcon: Icons.map_rounded,
             label: 'Territorios',
-            isActive: currentIndex == 1,
-            onTap: () => onTap(1),
+            isActive: currentIndex == 2,
+            onTap: () => onTap(2),
+          ),
+          _TabItem(
+            icon: Icons.bar_chart_rounded,
+            activeIcon: Icons.bar_chart_rounded,
+            label: 'Informes',
+            isActive: currentIndex == 3,
+            onTap: () => onTap(3),
           ),
         ],
       ),
@@ -117,20 +137,15 @@ class _TabItem extends StatelessWidget {
           children: [
             Icon(
               isActive ? activeIcon : icon,
-              color: isActive
-                  ? AppColors.primary
-                  : AppColors.textSecondary,
+              color: isActive ? AppColors.primary : AppColors.textSecondary,
               size: 22,
             ),
             const SizedBox(height: 2),
             Text(
               label,
               style: AppTextStyles.caption.copyWith(
-                color: isActive
-                    ? AppColors.primary
-                    : AppColors.textSecondary,
-                fontWeight:
-                    isActive ? FontWeight.w600 : FontWeight.w400,
+                color: isActive ? AppColors.primary : AppColors.textSecondary,
+                fontWeight: isActive ? FontWeight.w600 : FontWeight.w400,
               ),
             ),
           ],
